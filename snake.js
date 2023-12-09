@@ -18,16 +18,15 @@ function updateBoard() {
 		return;
 	}
 
-	// desenam board
+	// draw board
 	context.fillStyle = "black";
 	context.fillRect(0, 0, board.width, board.height);
 
-	// desenam mancare
+	// draw food
 	context.fillStyle = "red";
 	context.fillRect(foodX, foodY, blockSize, blockSize);
 	if (snakeHeadX == foodX && snakeHeadY == foodY) {
 		color -= 10;
-		// snake.push([foodX, foodY, `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`]);
 		snake.push([foodX, foodY, `rgb(0, ${color}, 0)`]);
 		scoreValue++;
 		score = document.getElementById("score");
@@ -35,22 +34,23 @@ function updateBoard() {
 		document.set
 		placeFood();
 	}
-	// desenam sarpe
-	// desenam corp sarpe
+	// draw snake
+	// draw snake head
 	for (let i = snake.length - 1; i > 0; i--) {
-		snake[i][0] = snake[i - 1][0];				// blocurile de la coada urmaresc capul
-		snake[i][1] = snake[i - 1][1];				// blocurile de la coada urmaresc capul
+		// the tail is following the head
+		snake[i][0] = snake[i - 1][0];
+		snake[i][1] = snake[i - 1][1];
 	}
 	if (snake.length) {
-		snake[0] = [snakeHeadX, snakeHeadY, "lime"];	// blocurile de la coada, au suprascris capul, asa ca urmeaza capul sa fie repozitionat
+		// tail blocks overwritte the head, so the head must be replaced
+		snake[0] = [snakeHeadX, snakeHeadY, "lime"];
 	}
 	context.fillStyle = "lime";
-	snakeHeadX += snakeDirectionX * blockSize;	// repozitionarea capului pe X
-	snakeHeadY += snakeDirectionY * blockSize;	// repozitionarea capului pe Y
+	snakeHeadX += snakeDirectionX * blockSize;	// replace head on X
+	snakeHeadY += snakeDirectionY * blockSize;	// replace head on Y
 	snakeBorders();
 	context.fillRect(snakeHeadX, snakeHeadY, blockSize, blockSize);
 	for (let i = 0; i < snake.length; i++) {
-		// context.fillStyle = `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`;
 		if (snakeHeadX == snake[i][0] && snakeHeadY == snake[i][1]) {
 			gameOver = true;
 			alert("Game over!");
@@ -58,7 +58,6 @@ function updateBoard() {
 		context.fillStyle = snake[i][2];
 		context.fillRect(snake[i][0], snake[i][1], blockSize, blockSize);
 	}
-
 }
 
 function placeFood() {
@@ -75,88 +74,78 @@ function changeDirection(event) {
 	switch (event.code) {
 		case "ArrowUp":
 			if (snakeDirectionY != 1) {
-				snakeDirectionX = 0;	// mergem pe Y nu pe X
-				snakeDirectionY = -1;	// mergem in SUS pe Y
+				snakeDirectionX = 0;	// choose Y not X
+				snakeDirectionY = -1;	// go up on Y
 			}
 			break;
 		case "ArrowDown":
 			if (snakeDirectionY != -1) {
-				snakeDirectionX = 0;		// mergem pe Y nu pe X
-				snakeDirectionY = 1;		// mergem in JOS pe Y
+				snakeDirectionX = 0;		// choose Y not X
+				snakeDirectionY = 1;		// go down on Y
 			}
 			break;
 		case "ArrowLeft":
 			if (snakeDirectionX != 1) {
-				snakeDirectionX = -1;	// mergem in STANGA pe X
-				snakeDirectionY = 0;		// mergem pe X nu pe Y
+				snakeDirectionX = -1;		// go left on X
+				snakeDirectionY = 0;		// // choose X not Y
 			}
 			break;
 		case "ArrowRight":
 			if (snakeDirectionX != -1) {
-				snakeDirectionX = 1;		// mergem in DREAPTA pe X
-				snakeDirectionY = 0;		// mergem pe X nu pe Y
+				snakeDirectionX = 1;		// go right on X
+				snakeDirectionY = 0;		// choose X not Y
 			}
 			break;
-		// case "S":
-		// 	speed++;
-		// 	break;
-		// case "A":
-		// 	speed--;
-		// 	break;
 	}
 }
 
 // Variabilele 'globale'
 // board
-const rows = 20;			// date din fereastra anterioara
-const cols = 20;			// date din fereastra anterioara
+const rows = 20;			// data from the previous page
+const cols = 20;			// data from the previous page
 const blockSize = 25;
 
-var board;				// plansa (matricea)?
-var context;			// contextul de canvas in care se va desena
+var board;				// board (matrix)
+var context;			// canvas context in which the drawings are made
 
-// sarpele
+// snake parts
 var snakeHeadX;
 var snakeHeadY;
-var snake = [];			// array de coordonate
+var snake = [];			// array of coordinates
 
-// mancaree
+// food parts
 var foodX;
 var foodY;
 
-// directie sarpe
+// snake directions
 var snakeDirectionX = 0;
 var snakeDirectionY = 0;
 
-// viteza sarpe
-// var speed = 1;
-
+// other variables
 var color = 255;
-
 var gameOver = false;
-
 var scoreValue = 0;
 
-// cand fereastra se incarca, se executa functia.
+// when the page is loaded, this function will run first
 window.onload = function() {
-	// setam contextul pentru board: board primeste elementul din html, denumit intuitiv 'board'
+	// set context: the board recieved the 'board' element form html
 	board = document.getElementById("board");
 	board.height = rows * blockSize;
 	board.width = cols * blockSize;
 
-	// setam contextul pentru a desena pe board
+	// enable drawing on the context
 	context = board.getContext("2d");
 
-	// coordonatele initiale pt mancare
+	// initialize the food coordinates
 	placeFood();
 
-	// coordonatele initiale pt sarpe
+	// initialize the snake (head) coordinates
 	placeSnake();
 
-	// adauga raspuns la comenzi:
-	// keyup va astepta pana se ridica tasta si atunci va executa functia changeDirection
+	// add keys events
+	// keyup waits until the key is released. Only then the function changeDirection will be called
 	document.addEventListener("keyup", changeDirection);
 
-	// functia care redeseneaza tabla
-	setInterval(updateBoard, 100); 		// la fiecare 100 ms redeseneaza board-ul
+	// the function which redraws the board at every 100 ms
+	setInterval(updateBoard, 100);
 }
