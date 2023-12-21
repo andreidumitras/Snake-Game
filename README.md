@@ -1,5 +1,6 @@
 # Snake Game
  - July 2023
+ - Personal project
 
 A simple Snake game that can be played inside the browser.
 It was developed using Vanilla JavaScript, for learning purposes.
